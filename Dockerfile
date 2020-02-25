@@ -2,28 +2,22 @@ FROM php:fpm-alpine
 
 #### PHP7 extensions ##############################
 RUN apk add --update --no-cache --virtual .ext-deps \
-        libjpeg-turbo-dev \
-        libwebp-dev \
-        libpng-dev \
-        freetype-dev \
-        libmcrypt-dev \
-        autoconf \
-        g++ \
-        make \
-	openssl-dev pcre-dev pcre-tools pcre \
-        libmemcached zlib cyrus-sasl libmemcached-dev zlib-dev cyrus-sasl-dev
-
-RUN \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    libpng-dev \
+    freetype-dev \
+    libmcrypt-dev \
+    autoconf \
+    g++ \
+    make \
+    openssl-dev pcre-dev pcre-tools pcre \
+    libmemcached zlib cyrus-sasl libmemcached-dev zlib-dev cyrus-sasl-dev && \
     docker-php-ext-configure pdo_mysql && \
     docker-php-ext-configure opcache && \
     docker-php-ext-configure exif && \
-    docker-php-ext-configure gd \
-    --with-jpeg-dir=/usr/include --with-png-dir=/usr/include \
-    --with-webp-dir=/usr/include --with-freetype-dir=/usr/include && \
+    docker-php-ext-configure gd && \
     docker-php-ext-configure sockets && \
-    docker-php-ext-install pdo_mysql opcache exif gd sockets mysqli
-
-RUN \
+    docker-php-ext-install pdo_mysql opcache exif gd sockets mysqli && \
     pecl install redis && \
     pecl install mongodb && \
     pecl install memcached && \
