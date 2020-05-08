@@ -1,6 +1,19 @@
 #!/bin/sh
+## check if docker-compose exist?
+compose=$(which docker-compose)
+if [ -z "$compose" ]; then
+  echo "docker-compose not installed,"
+  echo "follow this https://docs.docker.com/compose/install/ to install it first."
+  exit 1
+else
+  if [ ! -x "$compose" ]; then
+     echo "$compose is not executable,"
+     echo "follow this https://docs.docker.com/compose/install/ to complete an installation"
+     exit 1
+  fi
+fi
 echo "Download latest WordPress..."
-wget -o /dev/null -O - https://wordpress.org/latest.tar.gz | tar zx
+wget -O - https://wordpress.org/latest.tar.gz | tar zxv
 mv wordpress html
 
 echo "Create a WordPress service."
