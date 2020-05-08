@@ -121,7 +121,6 @@ RUN  mkdir -p /etc/nginx/ssl \
  && echo '<?php if(isset($_REQUEST["printinfo"])) phpinfo();' > /var/www/html/index.php \
  && echo '?><a href=/?printinfo>see phpinfo()</a>' >> /var/www/html/index.php 
 ADD  ./start.sh /start.sh
-COPY ./nginx.conf ${NGINX_CONF}/nginx.conf
 RUN chmod +x /start.sh
 
 EXPOSE 80 9000
