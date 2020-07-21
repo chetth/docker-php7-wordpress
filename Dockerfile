@@ -1,4 +1,4 @@
-FROM php:7.3-fpm-alpine
+FROM php:7.4-fpm-alpine
 
 #### PHP7 extensions ##############################
 RUN apk add --update --no-cache --virtual .ext-deps \
@@ -19,11 +19,9 @@ RUN \
     docker-php-ext-configure pdo_mysql && \
     docker-php-ext-configure opcache && \
     docker-php-ext-configure exif && \
-    docker-php-ext-configure gd \
-    --with-jpeg-dir=/usr/include --with-png-dir=/usr/include \
-    --with-webp-dir=/usr/include --with-freetype-dir=/usr/include && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-configure sockets && \
-    docker-php-ext-install pdo_mysql opcache exif gd sockets mysqli
+    docker-php-ext-install pdo_mysql opcache exif gd sockets mysqli calendar
 
 RUN \
     pecl install redis && \
@@ -40,7 +38,7 @@ RUN \
     docker-php-source delete
 
 ####  Setup OpenResty ###################
-ENV OPENRESTY_VERSION 1.15.8.3
+ENV OPENRESTY_VERSION 1.17.8.1
 ENV OPENRESTY_PREFIX /opt/openresty
 ENV NGINX_PREFIX /opt/openresty/nginx
 ENV NGINX_CONF /opt/openresty/nginx/conf
@@ -106,6 +104,7 @@ RUN echo "==> Installing dependencies..." \
  && ln -sf $OPENRESTY_PREFIX/luajit/bin/luajit-* $OPENRESTY_PREFIX/luajit/bin/lua \
  && ln -sf $OPENRESTY_PREFIX/luajit/bin/luajit-* /usr/local/bin/lua \
  && apk del build-deps tzdata \
+ && apk update && apk upgrade \
  && apk add libpcrecpp libpcre16 libpcre32 openssl libssl1.1 pcre libgcc libstdc++ libuuid curl imagemagick ghostscript \
  && rm -rf /var/cache/apk/* \
  && rm -rf /root/ngx_openresty \
@@ -117,12 +116,11 @@ WORKDIR $NGINX_CONF
 ONBUILD RUN rm -rf conf/* html/*
 ONBUILD COPY nginx $NGINX_PREFIX/
 
-RUN  mkdir -p /etc/nginx/ssl \
- && echo '<?php if(isset($_REQUEST["printinfo"])) phpinfo();' > /var/www/html/index.php \
- && echo '?><a href=/?printinfo>see phpinfo()</a>' >> /var/www/html/index.php 
+RUN echo '<?php if(isset($_REQUEST["printinfo"])) phpinfo(); ?><a href=/?printinfo>see phpinfo()</a>' > /var/www/html/index.php
 ADD  ./start.sh /start.sh
+COPY ./nginx.conf ${NGINX_CONF}/nginx.conf
 RUN chmod +x /start.sh
 
-EXPOSE 80 9000
+EXPOSE 80
 
-ENTRYPOINT ["/start.sh",""]
+ENTRYPOINT ["/start.sh"]
