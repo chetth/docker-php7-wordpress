@@ -38,4 +38,4 @@ echo "pass: $mypassword"
 echo "====================="
 
 echo "Remove install.sh script."
-rm -f ./install.sh
+#rm -f ./install.sh
