@@ -1,10 +1,5 @@
-# docker-php7-wordpress
-Full stack PHP7-FPM extensions w/ OpenResty
-
-
-To run an instant WordPress site, just run
-
-```
-./install.sh
-```
-
+> [!IMPORTANT]
+> **This project is outdated and is no longer maintained.**
+>
+> Please use the new repository instead:
+> [docker-php8-wordpress7](https://github.com/chetth/docker-php8-wordpress7)
